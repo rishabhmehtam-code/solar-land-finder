@@ -69,9 +69,9 @@ export default function Dashboard() {
   const totalLandRequired = searchParams.capacity * searchParams.landPerMWAC;
 
   return (
-    <div className="h-full flex overflow-hidden">
+    <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
       <div
-        className="w-full md:w-96 bg-white border-r border-slate-200 flex flex-col overflow-y-auto"
+        style={{ width: '384px', display: 'flex', flexDirection: 'column', overflowY: 'auto', backgroundColor: 'white', borderRight: '1px solid #e2e8f0' }}
       >
         <div className="p-6 space-y-6">
           <div>
@@ -115,9 +115,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col">
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div
-          className="flex-1 bg-slate-100"
+          style={{ flex: 1, backgroundColor: '#f1f5f9' }}
         >
           <MapComponent
             searchParams={searchParams}
@@ -129,7 +129,7 @@ export default function Dashboard() {
         </div>
 
         <div
-          className="h-48 bg-white border-t border-slate-200 overflow-y-auto"
+          style={{ height: '192px', backgroundColor: 'white', borderTop: '1px solid #e2e8f0', overflowY: 'auto' }}
         >
           <ParcelList
             parcels={filteredParcels}

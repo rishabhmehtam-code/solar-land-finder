@@ -69,7 +69,7 @@ export default function Dashboard() {
   const totalLandRequired = searchParams.capacity * searchParams.landPerMWAC;
 
   return (
-    <div className="flex-1 flex overflow-hidden">
+    <div className="h-full flex overflow-hidden">
       <div
         className="w-full md:w-96 bg-white border-r border-slate-200 flex flex-col overflow-y-auto"
       >

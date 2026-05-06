@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Check, TrendingUp } from 'lucide-react';
-import { motion } from 'framer-motion';
 import type { Parcel } from '@/types';
 
 interface ParcelListProps {
@@ -48,11 +47,8 @@ export function ParcelList({
   return (
     <div className="flex overflow-x-auto gap-3 p-4">
       {sortedParcels.slice(0, 10).map((parcel, index) => (
-        <motion.div
+        <div
           key={parcel.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.05 }}
           onClick={() => onParcelSelect(parcel)}
           className={`flex-shrink-0 w-80 p-3 rounded-lg border-2 cursor-pointer transition-all ${
             selectedParcel?.id === parcel.id
@@ -108,7 +104,7 @@ export function ParcelList({
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   );

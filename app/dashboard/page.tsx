@@ -6,7 +6,6 @@ import { MapComponent } from '@/components/MapComponent';
 import { ParcelList } from '@/components/ParcelList';
 import { FilterPanel } from '@/components/FilterPanel';
 import { ExportOptions } from '@/components/ExportOptions';
-import { motion } from 'framer-motion';
 import type { SearchParams, Parcel } from '@/types';
 
 export default function Dashboard() {
@@ -66,9 +65,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex-1 flex overflow-hidden">
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
+      <div
         className="w-full md:w-96 bg-white border-r border-slate-200 flex flex-col overflow-y-auto"
       >
         <div className="p-6 space-y-6">
@@ -111,12 +108,10 @@ export default function Dashboard() {
             Found <span className="font-semibold">{filteredParcels.length}</span> viable parcels
           </div>
         </div>
-      </motion.div>
+      </div>
 
       <div className="flex-1 flex flex-col">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+        <div
           className="flex-1 bg-slate-100"
         >
           <MapComponent
@@ -126,11 +121,9 @@ export default function Dashboard() {
             onParcelSelect={setSelectedParcel}
             totalLandRequired={totalLandRequired}
           />
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
           className="h-48 bg-white border-t border-slate-200 overflow-y-auto"
         >
           <ParcelList
@@ -140,7 +133,7 @@ export default function Dashboard() {
             loading={loading}
             totalLandRequired={totalLandRequired}
           />
-        </motion.div>
+        </div>
       </div>
     </div>
   );

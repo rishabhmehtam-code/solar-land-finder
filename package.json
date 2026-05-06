@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "preinstall": "npm config set legacy-peer-deps true"
   },
   "dependencies": {
     "next": "16.2.4",

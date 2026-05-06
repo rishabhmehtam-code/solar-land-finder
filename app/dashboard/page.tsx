@@ -1,12 +1,17 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { SearchInput } from '@/components/SearchInput';
-import { MapComponent } from '@/components/MapComponent';
 import { ParcelList } from '@/components/ParcelList';
 import { FilterPanel } from '@/components/FilterPanel';
 import { ExportOptions } from '@/components/ExportOptions';
 import type { SearchParams, Parcel } from '@/types';
+
+const MapComponent = dynamic(
+  () => import('@/components/MapComponent').then(mod => ({ default: mod.MapComponent })),
+  { ssr: false }
+);
 
 export default function Dashboard() {
   const [searchParams, setSearchParams] = useState<SearchParams>({

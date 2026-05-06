@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, MapPin } from 'lucide-react';
+import { Search, MapPin, AlertCircle } from 'lucide-react';
 import type { SearchParams } from '@/types';
 
 interface SearchInputProps {
@@ -15,10 +15,12 @@ export function SearchInput({ onSearch, initialParams }: SearchInputProps) {
   const [capacity, setCapacity] = useState(initialParams.capacity);
   const [landPerMWAC, setLandPerMWAC] = useState(initialParams.landPerMWAC);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleLocationSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
 
     try {
       const geoResponse = await fetch(
@@ -36,9 +38,12 @@ export function SearchInput({ onSearch, initialParams }: SearchInputProps) {
           landPerMWAC,
           location,
         });
+      } else {
+        setError(`Location "${location}" not found. Try another search.`);
       }
     } catch (error) {
       console.error('Geocoding error:', error);
+      setError('Failed to search location. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -66,6 +71,12 @@ export function SearchInput({ onSearch, initialParams }: SearchInputProps) {
             <Search className="w-4 h-4" />
           </button>
         </div>
+        {error && (
+          <div className="mt-2 flex items-center gap-2 text-red-600 text-xs bg-red-50 p-2 rounded">
+            <AlertCircle className="w-3 h-3" />
+            {error}
+          </div>
+        )}
       </div>
 
       <div>
@@ -74,7 +85,7 @@ export function SearchInput({ onSearch, initialParams }: SearchInputProps) {
         </label>
         <input
           type="range"
-          min="5"
+          min="0"
           max="100"
           step="5"
           value={radius}
@@ -85,17 +96,28 @@ export function SearchInput({ onSearch, initialParams }: SearchInputProps) {
 
       <div>
         <label className="block text-xs font-medium text-slate-700 mb-2">
-          Plant Capacity: <span className="text-blue-600 font-semibold">{capacity} MWAC</span>
+          Plant Capacity (MWAC)
         </label>
-        <input
-          type="range"
-          min="10"
-          max="500"
-          step="10"
-          value={capacity}
-          onChange={(e) => setCapacity(Number(e.target.value))}
-          className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-        />
+        <div className="flex gap-2">
+          <input
+            type="range"
+            min="10"
+            max="500"
+            step="1"
+            value={capacity}
+            onChange={(e) => setCapacity(Number(e.target.value))}
+            className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+          />
+          <input
+            type="number"
+            min="10"
+            max="500"
+            step="1"
+            value={capacity}
+            onChange={(e) => setCapacity(Math.max(10, Math.min(500, Number(e.target.value))))}
+            className="w-16 px-2 py-1 border border-slate-300 rounded text-sm font-semibold text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
       </div>
 
       <div>

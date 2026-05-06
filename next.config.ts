@@ -11,8 +11,9 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  turbopack: {},
   experimental: {
-    optimizePackageImports: ["leaflet", "framer-motion"],
+    optimizePackageImports: ["leaflet"],
   },
 };
 

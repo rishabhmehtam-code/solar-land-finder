@@ -21,7 +21,7 @@ export function MapComponent({
   totalLandRequired,
 }: MapComponentProps) {
   const mapRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<L.Marker[]>([]);
+  const markersRef = useRef<(L.Marker | L.CircleMarker)[]>([]);
   const circleRef = useRef<L.Circle | null>(null);
 
   useEffect(() => {

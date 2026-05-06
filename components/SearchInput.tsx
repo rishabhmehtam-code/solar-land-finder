@@ -12,7 +12,7 @@ interface SearchInputProps {
 export function SearchInput({ onSearch, initialParams }: SearchInputProps) {
   const [location, setLocation] = useState(initialParams.location || 'Mumbai');
   const [radius, setRadius] = useState(initialParams.radius);
-  const [capacity, setCapacity] = useState(initialParams.capacity);
+  const [capacity, setCapacity] = useState(initialParams.capacity.toString());
   const [landPerMWAC, setLandPerMWAC] = useState(initialParams.landPerMWAC);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,65 +23,84 @@ export function SearchInput({ onSearch, initialParams }: SearchInputProps) {
     setError('');
 
     try {
-      const geoResponse = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)},Maharashtra,India&format=json`
-      );
-      const geoData = await geoResponse.json();
+      // Check if input is coordinates (lat,lon format)
+      const coordMatch = location.match(/^([\d.-]+)\s*,\s*([\d.-]+)$/);
+      let lat, lon;
 
-      if (geoData.length > 0) {
-        const { lat, lon } = geoData[0];
-        onSearch({
-          lat: parseFloat(lat),
-          lng: parseFloat(lon),
-          radius,
-          capacity,
-          landPerMWAC,
-          location,
-        });
+      if (coordMatch) {
+        lat = parseFloat(coordMatch[1]);
+        lon = parseFloat(coordMatch[2]);
+        if (isNaN(lat) || isNaN(lon)) {
+          setError('Invalid coordinates format. Use: lat, lon');
+          setLoading(false);
+          return;
+        }
       } else {
-        setError(`Location "${location}" not found. Try another search.`);
+        // Search by location name
+        const geoResponse = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(location)},Maharashtra,India&format=json`
+        );
+        const geoData = await geoResponse.json();
+
+        if (geoData.length === 0) {
+          setError(`Location "${location}" not found. Try another search or use coordinates (lat, lon).`);
+          setLoading(false);
+          return;
+        }
+        lat = parseFloat(geoData[0].lat);
+        lon = parseFloat(geoData[0].lon);
       }
+
+      const capacityNum = parseInt(capacity) || 50;
+      onSearch({
+        lat,
+        lng: lon,
+        radius,
+        capacity: capacityNum,
+        landPerMWAC,
+        location,
+      });
     } catch (error) {
-      console.error('Geocoding error:', error);
-      setError('Failed to search location. Please try again.');
+      console.error('Search error:', error);
+      setError('Failed to search. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleLocationSearch} className="space-y-4">
+    <form onSubmit={handleLocationSearch} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">
+        <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#64748b', marginBottom: '8px' }}>
           Substation or Location
         </label>
-        <div className="flex gap-2">
+        <div style={{ display: 'flex', gap: '8px' }}>
           <input
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g., Pune, Nagpur..."
-            className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g., Pune or 18.52, 73.85"
+            style={{ flex: 1, padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '8px', fontSize: '13px', fontFamily: 'inherit' }}
           />
           <button
             type="submit"
             disabled={loading}
-            className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+            style={{ padding: '8px 12px', backgroundColor: loading ? '#94a3b8' : '#2563eb', color: 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '500', cursor: 'pointer', transition: 'background-color 0.2s' }}
           >
-            <Search className="w-4 h-4" />
+            <Search size={16} />
           </button>
         </div>
         {error && (
-          <div className="mt-2 flex items-center gap-2 text-red-600 text-xs bg-red-50 p-2 rounded">
-            <AlertCircle className="w-3 h-3" />
+          <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px', color: '#dc2626', fontSize: '12px', backgroundColor: '#fee2e2', padding: '10px', borderRadius: '8px', border: '1px solid #fecaca' }}>
+            <AlertCircle size={14} />
             {error}
           </div>
         )}
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-slate-700 mb-2">
-          Search Radius: <span className="text-blue-600 font-semibold">{radius} km</span>
+        <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#64748b', marginBottom: '8px' }}>
+          Search Radius: <span style={{ color: '#2563eb', fontWeight: '600' }}>{radius} km</span>
         </label>
         <input
           type="range"
@@ -90,39 +109,38 @@ export function SearchInput({ onSearch, initialParams }: SearchInputProps) {
           step="5"
           value={radius}
           onChange={(e) => setRadius(Number(e.target.value))}
-          className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+          style={{ width: '100%', height: '6px', borderRadius: '4px', appearance: 'none', cursor: 'pointer', accentColor: '#2563eb' }}
         />
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-slate-700 mb-2">
+        <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#64748b', marginBottom: '8px' }}>
           Plant Capacity (MWAC)
         </label>
-        <div className="flex gap-2">
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <input
             type="range"
             min="10"
             max="500"
             step="1"
             value={capacity}
-            onChange={(e) => setCapacity(Number(e.target.value))}
-            className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+            onChange={(e) => setCapacity(e.target.value)}
+            style={{ flex: 1, height: '6px', borderRadius: '4px', appearance: 'none', cursor: 'pointer', accentColor: '#2563eb' }}
           />
           <input
             type="number"
             min="10"
             max="500"
-            step="1"
             value={capacity}
-            onChange={(e) => setCapacity(Math.max(10, Math.min(500, Number(e.target.value))))}
-            className="w-16 px-2 py-1 border border-slate-300 rounded text-sm font-semibold text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => setCapacity(e.target.value)}
+            style={{ width: '60px', padding: '6px 8px', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '13px', fontWeight: '600', color: '#2563eb', textAlign: 'center' }}
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-slate-700 mb-2">
-          Land per MWAC: <span className="text-blue-600 font-semibold">{landPerMWAC.toFixed(2)} acres</span>
+        <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', color: '#64748b', marginBottom: '8px' }}>
+          Land per MWAC: <span style={{ color: '#2563eb', fontWeight: '600' }}>{landPerMWAC.toFixed(2)} acres</span>
         </label>
         <input
           type="range"
@@ -131,16 +149,15 @@ export function SearchInput({ onSearch, initialParams }: SearchInputProps) {
           step="0.25"
           value={landPerMWAC}
           onChange={(e) => setLandPerMWAC(Number(e.target.value))}
-          className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+          style={{ width: '100%', height: '6px', borderRadius: '4px', appearance: 'none', cursor: 'pointer', accentColor: '#2563eb' }}
         />
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+        style={{ padding: '10px 16px', backgroundColor: loading ? '#94a3b8' : '#2563eb', color: 'white', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, transition: 'all 0.2s' }}
       >
-        <MapPin className="w-4 h-4" />
         {loading ? 'Searching...' : 'Search Parcels'}
       </button>
     </form>

@@ -25,7 +25,7 @@ export interface Parcel {
   viabilityScore: number;
   coordinates: {
     type: string;
-    coordinates: [number, number][];
+    coordinates: [number, number][][];
   };
 }
 

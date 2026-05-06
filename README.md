@@ -1,5 +1,5 @@
 # ☀️ Solar Land Finder - MVP
-
+.
 A complete web application for identifying viable land parcels for solar farm development near electrical substations in India.
 
 ## ✅ All Files Ready!

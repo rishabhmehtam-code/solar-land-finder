@@ -6,7 +6,7 @@ import { SearchInput } from '@/components/SearchInput';
 import { ParcelList } from '@/components/ParcelList';
 import { FilterPanel } from '@/components/FilterPanel';
 import { ExportOptions } from '@/components/ExportOptions';
-import { TrendingUp, Check, MapPin } from 'lucide-react';
+import { TrendingUp, Check, MapPin, Zap, Mountain } from 'lucide-react';
 import type { SearchParams, Parcel } from '@/types';
 
 const MapComponent = dynamic(
@@ -32,6 +32,7 @@ export default function Dashboard() {
     roadAccess: true,
     clearTitle: false,
   });
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleSearch = useCallback(async (params: SearchParams) => {
     setSearchParams(params);
@@ -70,50 +71,163 @@ export default function Dashboard() {
   const totalLandRequired = searchParams.capacity * searchParams.landPerMWAC;
 
   return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'hidden', backgroundColor: '#ffffff' }}>
-      {/* LEFT SIDEBAR - Search & Filters - Apple Style */}
-      <div style={{ width: '340px', display: 'flex', flexDirection: 'column', overflowY: 'auto', backgroundColor: '#ffffff', borderRight: '1px solid #f0f0f0' }}>
-        <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
+    <div style={{ display: 'flex', height: '100%', overflow: 'hidden', backgroundColor: '#0f1419' }}>
+      {/* ANIMATED SIDEBAR */}
+      <div
+        style={{
+          width: sidebarOpen ? '380px' : '0px',
+          transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          overflow: 'hidden',
+          backgroundColor: '#ffffff',
+          borderRight: '1px solid #e5e7eb',
+          boxShadow: sidebarOpen ? '0 20px 40px rgba(0,0,0,0.08)' : 'none',
+        }}
+      >
+        <div style={{ padding: '40px 28px', display: 'flex', flexDirection: 'column', gap: '32px', minHeight: '100vh', overflowY: 'auto' }}>
+          {/* HEADER */}
           <div>
-            <h2 style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px', color: '#000000', letterSpacing: '-0.5px' }}>Find Solar Sites</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'linear-gradient(135deg, #fbbf24 0%, #f97316 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Zap size={16} color="white" />
+              </div>
+              <span style={{ fontSize: '14px', fontWeight: '700', color: '#1f2937', letterSpacing: '0.3px' }}>SOLAR FINDER</span>
+            </div>
+            <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#000000', lineHeight: '1.2', letterSpacing: '-1px', marginBottom: '8px' }}>
+              Find Your Solar Site
+            </h1>
+            <p style={{ fontSize: '13px', color: '#6b7280' }}>Discover optimal land for solar farms</p>
+          </div>
+
+          {/* SEARCH SECTION */}
+          <div style={{ animation: 'fadeIn 0.6s ease-out' }}>
             <SearchInput onSearch={handleSearch} initialParams={searchParams} />
           </div>
 
-          <div>
-            <h3 style={{ fontSize: '13px', fontWeight: '600', marginBottom: '16px', color: '#6f6f6f', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Project Summary</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid #f5f5f5' }}>
-                <span style={{ color: '#6f6f6f' }}>Capacity</span>
-                <span style={{ fontWeight: '600', color: '#000000' }}>{searchParams.capacity} MWAC</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '12px', borderBottom: '1px solid #f5f5f5' }}>
-                <span style={{ color: '#6f6f6f' }}>Land Ratio</span>
-                <span style={{ fontWeight: '600', color: '#000000' }}>{searchParams.landPerMWAC} ac/MW</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '4px' }}>
-                <span style={{ color: '#6f6f6f', fontWeight: '500' }}>Land Required</span>
-                <span style={{ fontWeight: '700', color: '#0071e3', fontSize: '15px' }}>{totalLandRequired.toFixed(0)} acres</span>
-              </div>
+          {/* LIVE STATS */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div
+              style={{
+                padding: '16px',
+                borderRadius: '14px',
+                backgroundColor: '#fef3c7',
+                border: '1px solid #fde68a',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 10px 20px rgba(251, 191, 36, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div style={{ fontSize: '11px', color: '#92400e', fontWeight: '600', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.4px' }}>Capacity</div>
+              <div style={{ fontSize: '20px', fontWeight: '800', color: '#1f2937' }}>{searchParams.capacity}</div>
+              <div style={{ fontSize: '11px', color: '#a16207', marginTop: '2px' }}>MWAC</div>
+            </div>
+
+            <div
+              style={{
+                padding: '16px',
+                borderRadius: '14px',
+                backgroundColor: '#d1fae5',
+                border: '1px solid #a7f3d0',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 10px 20px rgba(16, 185, 129, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div style={{ fontSize: '11px', color: '#065f46', fontWeight: '600', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.4px' }}>Land Needed</div>
+              <div style={{ fontSize: '20px', fontWeight: '800', color: '#1f2937' }}>{totalLandRequired.toFixed(0)}</div>
+              <div style={{ fontSize: '11px', color: '#047857', marginTop: '2px' }}>ACRES</div>
             </div>
           </div>
 
+          {/* FILTERS SECTION */}
           <div>
-            <h3 style={{ fontSize: '13px', fontWeight: '600', marginBottom: '16px', color: '#6f6f6f', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Preferences</h3>
+            <h3 style={{ fontSize: '12px', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.5px' }}>Smart Filters</h3>
             <FilterPanel filters={filters} onFiltersChange={setFilters} />
           </div>
 
-          <div style={{ paddingTop: '16px', borderTop: '1px solid #f5f5f5' }}>
+          {/* EXPORT SECTION */}
+          <div style={{ paddingTop: '16px', borderTop: '1px solid #f3f4f6' }}>
+            <h3 style={{ fontSize: '12px', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '0.5px' }}>Export Results</h3>
             <ExportOptions parcels={filteredParcels} searchParams={searchParams} />
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '10px', fontSize: '13px', fontWeight: '500', color: '#555555' }}>
-            {filteredParcels.length} <span style={{ marginLeft: '4px' }}>sites found</span>
+          {/* RESULTS BADGE */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              padding: '14px',
+              borderRadius: '12px',
+              background: 'linear-gradient(135deg, #e0e7ff 0%, #fce7f3 100%)',
+              fontSize: '13px',
+              fontWeight: '700',
+              color: '#4f46e5',
+              border: '1px solid #c7d2fe',
+            }}
+          >
+            <div
+              style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: '#10b981',
+                animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              }}
+            />
+            {filteredParcels.length} sites ready
           </div>
         </div>
       </div>
 
-      {/* CENTER - MAP */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#f9f9f9' }}>
+      {/* MAP AREA */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', backgroundColor: '#0f1419' }}>
+        {/* TOGGLE BUTTON */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          style={{
+            position: 'absolute',
+            top: '20px',
+            left: sidebarOpen ? '400px' : '20px',
+            zIndex: 20,
+            width: '40px',
+            height: '40px',
+            borderRadius: '10px',
+            backgroundColor: '#ffffff',
+            border: 'none',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.3s ease',
+            color: '#1f2937',
+            fontSize: '20px',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.boxShadow = '0 15px 35px rgba(0,0,0,0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
+          }}
+        >
+          {sidebarOpen ? '‹' : '›'}
+        </button>
+
         <MapComponent
           searchParams={searchParams}
           parcels={filteredParcels}
@@ -123,73 +237,134 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* RIGHT SIDEBAR - Selected Parcel Details */}
-      <div style={{ width: '300px', backgroundColor: '#ffffff', borderLeft: '1px solid #f0f0f0', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
-        {selectedParcel ? (
-          <div style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* RIGHT PANEL - PARCEL DETAILS */}
+      <div
+        style={{
+          width: selectedParcel ? '360px' : '0px',
+          transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          backgroundColor: '#ffffff',
+          borderLeft: '1px solid #e5e7eb',
+          overflowY: 'auto',
+          boxShadow: selectedParcel ? '-20px 0 40px rgba(0,0,0,0.1)' : 'none',
+        }}
+      >
+        {selectedParcel && (
+          <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* HEADER */}
             <div>
-              <div style={{ fontSize: '13px', color: '#6f6f6f', marginBottom: '4px' }}>{selectedParcel.village}</div>
-              <h3 style={{ fontSize: '22px', fontWeight: '700', color: '#000000', marginBottom: '8px', letterSpacing: '-0.5px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <MapPin size={14} style={{ color: '#f97316' }} />
+                <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>{selectedParcel.village}</span>
+              </div>
+              <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#000000', letterSpacing: '-0.5px', marginBottom: '4px' }}>
                 {selectedParcel.plotNumber}
-              </h3>
-              <div style={{ fontSize: '12px', color: '#a0a0a0' }}>
-                {selectedParcel.district}
+              </h2>
+              <p style={{ fontSize: '12px', color: '#9ca3af' }}>{selectedParcel.district}</p>
+            </div>
+
+            {/* VIABILITY SCORE */}
+            <div
+              style={{
+                padding: '16px',
+                borderRadius: '14px',
+                background: `linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%)`,
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <TrendingUp size={20} style={{ color: '#10b981' }} />
+                <div>
+                  <div style={{ fontSize: '12px', color: '#6b7280', fontWeight: '600' }}>Viability Score</div>
+                  <div style={{ fontSize: '14px', color: '#10b981', fontWeight: '800' }}>{selectedParcel.viabilityScore.toFixed(0)}%</div>
+                </div>
               </div>
+              <div style={{ fontSize: '24px' }}>✨</div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#f0f8f0', padding: '12px 14px', borderRadius: '10px' }}>
-              <TrendingUp size={16} style={{ color: '#34c759' }} />
-              <span style={{ fontWeight: '600', color: '#34c759', fontSize: '14px' }}>{selectedParcel.viabilityScore.toFixed(0)}% Viable Site</span>
-            </div>
-
+            {/* METRICS GRID */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div style={{ padding: '14px', backgroundColor: '#f5f5f5', borderRadius: '10px', textAlign: 'center' }}>
-                <div style={{ color: '#999999', fontSize: '11px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.3px' }}>Area</div>
-                <div style={{ fontWeight: '700', color: '#000000', fontSize: '16px' }}>{selectedParcel.area.toFixed(1)}</div>
-                <div style={{ color: '#999999', fontSize: '10px', marginTop: '2px' }}>acres</div>
-              </div>
-              <div style={{ padding: '14px', backgroundColor: '#f5f5f5', borderRadius: '10px', textAlign: 'center' }}>
-                <div style={{ color: '#999999', fontSize: '11px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.3px' }}>Distance</div>
-                <div style={{ fontWeight: '700', color: '#000000', fontSize: '16px' }}>{selectedParcel.distanceFromSubstation.toFixed(1)}</div>
-                <div style={{ color: '#999999', fontSize: '10px', marginTop: '2px' }}>km</div>
-              </div>
-              <div style={{ padding: '14px', backgroundColor: '#f5f5f5', borderRadius: '10px', textAlign: 'center' }}>
-                <div style={{ color: '#999999', fontSize: '11px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.3px' }}>Slope</div>
-                <div style={{ fontWeight: '700', color: '#000000', fontSize: '16px' }}>{selectedParcel.slope.toFixed(1)}°</div>
-              </div>
-              <div style={{ padding: '14px', backgroundColor: '#f5f5f5', borderRadius: '10px', textAlign: 'center' }}>
-                <div style={{ color: '#999999', fontSize: '11px', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.3px' }}>Flood</div>
-                <div style={{ fontWeight: '700', color: selectedParcel.floodRisk === 'low' ? '#34c759' : selectedParcel.floodRisk === 'medium' ? '#ff9500' : '#ff3b30', fontSize: '14px' }}>
-                  {selectedParcel.floodRisk}
+              {[
+                { label: 'Area', value: selectedParcel.area.toFixed(1), unit: 'acres', icon: '📍' },
+                { label: 'Distance', value: selectedParcel.distanceFromSubstation.toFixed(1), unit: 'km', icon: '⚡' },
+                { label: 'Slope', value: selectedParcel.slope.toFixed(1), unit: '°', icon: '🏔️' },
+                {
+                  label: 'Flood Risk',
+                  value: selectedParcel.floodRisk,
+                  unit: '',
+                  icon: selectedParcel.floodRisk === 'low' ? '✓' : '!',
+                  color: selectedParcel.floodRisk === 'low' ? '#10b981' : selectedParcel.floodRisk === 'medium' ? '#f59e0b' : '#ef4444',
+                },
+              ].map((metric, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    padding: '14px',
+                    borderRadius: '12px',
+                    backgroundColor: '#f9fafb',
+                    border: '1px solid #f3f4f6',
+                    textAlign: 'center',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.backgroundColor = '#f3f4f6';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.backgroundColor = '#f9fafb';
+                  }}
+                >
+                  <div style={{ fontSize: '16px', marginBottom: '4px' }}>{metric.icon}</div>
+                  <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: '600', marginBottom: '6px' }}>{metric.label}</div>
+                  <div style={{ fontSize: '18px', fontWeight: '800', color: metric.color || '#1f2937' }}>
+                    {metric.value}
+                  </div>
+                  {metric.unit && <div style={{ fontSize: '10px', color: '#9ca3af', marginTop: '2px' }}>{metric.unit}</div>}
                 </div>
-              </div>
+              ))}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px' }}>
-              {selectedParcel.roadAccess && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', backgroundColor: '#f0f8f0', borderRadius: '10px', fontSize: '13px', color: '#34c759', fontWeight: '600' }}>
-                  <Check size={16} />
-                  Road Access
-                </div>
-              )}
-              {selectedParcel.clearTitle && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px', backgroundColor: '#f0f8f0', borderRadius: '10px', fontSize: '13px', color: '#34c759', fontWeight: '600' }}>
-                  <Check size={16} />
-                  Clear Title
-                </div>
-              )}
+            {/* AMENITIES */}
+            <div>
+              <h3 style={{ fontSize: '12px', fontWeight: '700', color: '#6b7280', textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '0.5px' }}>Amenities</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {selectedParcel.roadAccess && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', borderRadius: '10px', backgroundColor: '#f0fdf4', border: '1px solid #dbeafe' }}>
+                    <Check size={18} style={{ color: '#10b981' }} />
+                    <span style={{ fontSize: '13px', fontWeight: '600', color: '#059669' }}>Road Access</span>
+                  </div>
+                )}
+                {selectedParcel.clearTitle && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 14px', borderRadius: '10px', backgroundColor: '#f0fdf4', border: '1px solid #dbeafe' }}>
+                    <Check size={18} style={{ color: '#10b981' }} />
+                    <span style={{ fontSize: '13px', fontWeight: '600', color: '#059669' }}>Clear Title</span>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '32px 20px', textAlign: 'center', color: '#999999', fontSize: '14px', flexDirection: 'column' }}>
-            <MapPin size={32} style={{ marginBottom: '12px', opacity: 0.4 }} />
-            Click a site on the map
           </div>
         )}
       </div>
 
-      {/* BOTTOM - Parcel List */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '130px', backgroundColor: '#ffffff', borderTop: '1px solid #f0f0f0', overflowY: 'auto', zIndex: 10 }}>
+      {/* BOTTOM PARCEL LIST */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '140px',
+          backgroundColor: '#ffffff',
+          borderTop: '1px solid #e5e7eb',
+          boxShadow: '0 -10px 30px rgba(0,0,0,0.08)',
+          zIndex: 10,
+          overflowY: 'auto',
+        }}
+      >
         <ParcelList
           parcels={filteredParcels}
           selectedParcel={selectedParcel}
@@ -198,6 +373,36 @@ export default function Dashboard() {
           totalLandRequired={totalLandRequired}
         />
       </div>
+
+      {/* GLOBAL STYLES */}
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+      `}</style>
     </div>
   );
 }

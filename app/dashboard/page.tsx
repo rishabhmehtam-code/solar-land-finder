@@ -245,11 +245,52 @@ export default function Dashboard() {
           backgroundColor: '#ffffff',
           borderLeft: '1px solid #e5e7eb',
           overflowY: 'auto',
-          boxShadow: selectedParcel ? '-20px 0 40px rgba(0,0,0,0.1)' : 'none',
+          boxShadow: selectedParcel ? '-20px 0 40px rgba(0,0,0,0.1)',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
+        {/* STICKY HEADER */}
         {selectedParcel && (
-          <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{
+            padding: '20px 24px',
+            borderBottom: '1px solid #e5e7eb',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            backgroundColor: '#f9fafb',
+            zIndex: 10,
+          }}>
+            <div>
+              <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.3px' }}>Selected Site</div>
+              <div style={{ fontSize: '16px', fontWeight: '800', color: '#000000', marginTop: '4px' }}>{selectedParcel.plotNumber}</div>
+            </div>
+            <button
+              onClick={() => setSelectedParcel(null)}
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                border: 'none',
+                backgroundColor: '#e5e7eb',
+                cursor: 'pointer',
+                fontSize: '18px',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#d1d5db';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#e5e7eb';
+              }}
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
+        {selectedParcel && (
+          <div style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: '24px', flex: 1, overflowY: 'auto' }}>
             {/* HEADER */}
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
@@ -350,28 +391,37 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* BOTTOM PARCEL LIST */}
+      {/* BOTTOM PARCEL LIST & EXPORT */}
       <div
         style={{
           position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
-          height: '140px',
+          height: '160px',
           backgroundColor: '#ffffff',
           borderTop: '1px solid #e5e7eb',
           boxShadow: '0 -10px 30px rgba(0,0,0,0.08)',
           zIndex: 10,
-          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <ParcelList
-          parcels={filteredParcels}
-          selectedParcel={selectedParcel}
-          onParcelSelect={setSelectedParcel}
-          loading={loading}
-          totalLandRequired={totalLandRequired}
-        />
+        {/* EXPORT BUTTONS HEADER */}
+        <div style={{ padding: '12px 24px', borderBottom: '1px solid #f3f4f6', display: 'flex', gap: '8px', backgroundColor: '#f9fafb' }}>
+          <ExportOptions parcels={filteredParcels} searchParams={searchParams} />
+        </div>
+
+        {/* PARCEL LIST */}
+        <div style={{ flex: 1, overflowY: 'auto', overflowX: 'auto' }}>
+          <ParcelList
+            parcels={filteredParcels}
+            selectedParcel={selectedParcel}
+            onParcelSelect={setSelectedParcel}
+            loading={loading}
+            totalLandRequired={totalLandRequired}
+          />
+        </div>
       </div>
 
       {/* GLOBAL STYLES */}

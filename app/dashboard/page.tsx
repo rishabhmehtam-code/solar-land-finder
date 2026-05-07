@@ -6,7 +6,7 @@ import { SearchInput } from '@/components/SearchInput';
 import { ParcelList } from '@/components/ParcelList';
 import { FilterPanel } from '@/components/FilterPanel';
 import { ExportOptions } from '@/components/ExportOptions';
-import { TrendingUp, Check } from 'lucide-react';
+import { TrendingUp, Check, MapPin } from 'lucide-react';
 import type { SearchParams, Parcel } from '@/types';
 
 const MapComponent = dynamic(
